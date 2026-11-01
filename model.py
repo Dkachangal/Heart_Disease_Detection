@@ -5,6 +5,8 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.naive_bayes import GaussianNB
+from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import accuracy_score
 
 df = pd.read_csv('heart.csv')
@@ -17,12 +19,13 @@ strCols = df[['Sex', 'ChestPainType','RestingECG', 'ExerciseAngina', 'ST_Slope']
 for col in strCols:
     le = LabelEncoder()
     x[col] = le.fit_transform(x[col].astype(str))
+print(x.head())
 
-x_train, x_test, y_train, y_test = train_test_split(x, y, test_size = 0.2, random_state = 42)
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size = 0.20, random_state = 42)
 
 
 # 1. LOGISTIC REGRESSION
-LogisticMode = LogisticRegression()
+LogisticMode = LogisticRegression(max_iter=1000)
 
 LogisticMode.fit(x_train, y_train)
 
@@ -33,7 +36,7 @@ accLogistic = accuracy_score(Logistic_y_predict, y_test)
 print("Logistic Regression Accuracy:", str(accLogistic * 100) +  "%")
 
 
-# 2. K N N
+# # 2. K N N
 KnnModel = KNeighborsClassifier(n_neighbors=5)
 
 KnnModel.fit(x_train, y_train)
@@ -43,8 +46,28 @@ Knn_y_predict = KnnModel.predict(x_test)
 accKnn = accuracy_score(y_test, Knn_y_predict)
 print("K-Nearest Neighbors Accuracy:", str(accKnn * 100) +  "%")
 
-# 3. DECISION TREE
-# 4. NAIVE BAYES
+
+# 3. NAIVE BAYES
+NaiveBayesModel = GaussianNB()
+
+NaiveBayesModel.fit(x_train, y_train)
+
+NaiveBayes_y_predict = NaiveBayesModel.predict(x_test)
+
+accNaive = accuracy_score(y_test, NaiveBayes_y_predict)
+print("Naive Bayes Accuracy:", str(accNaive * 100) +  "%")
+
+
+# 4. DECISION TREE
+DecisionTreeModel = DecisionTreeClassifier(random_state = 42)
+
+DecisionTreeModel.fit(x_train, y_train)
+
+DecisionTree_y_predict = DecisionTreeModel.predict(x_test)
+
+accuDecisionTree = accuracy_score(DecisionTree_y_predict, y_test)
+print("Decision Tree Accuracy:", str(accuDecisionTree * 100) +  "%")
+
 
 # sns.heatmap(x.corr(), annot=True)
 # plt.show()
